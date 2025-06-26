@@ -10,6 +10,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
 import { useState } from "react";
 import { useGitHubApi } from "../../context/GitHubApiProvider";
 import { isValidGithubToken } from "../../lib/github";
@@ -109,9 +110,10 @@ export default function GithubTokenDialog({
           value={token || ""}
           onChange={(e) => setToken(e.target.value)}
           error={!isValidToken(token)}
-          helperText="Warning: GitHub tokens are very sensitive. Anyone who 
-          gains access to this token will have access to your GitHub account.
-          Please proceed with caution."
+          helperText={!isValidToken(token) ? ( <> Invalid token format. If you believe this is an error,{" "}
+            <Link href="https://github.com/music-markdown/music-markdown/issues/new" rel="noreferer" target="_blank">contact the developer.</Link> </> )
+            : "Warning: GitHub tokens are very sensitive. Anyone who gains access to this token will \
+            have access to your GitHub account. Please proceed with caution."}
         ></TextField>
       </DialogContent>
       <DialogActions>
