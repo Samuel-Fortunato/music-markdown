@@ -21,6 +21,7 @@ import Tab from "@mui/material/Tab";
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import { set } from "ace-builds-internal/config";
 
 const StyledGrid = styled(Grid)(({ theme }) => ({
   position: "fixed",
@@ -28,19 +29,21 @@ const StyledGrid = styled(Grid)(({ theme }) => ({
   right: theme.spacing(2),
 }));
 
-interface AddRepositoryProps {
-  handleAddRepository: (repo: string) => Promise<void>;
+interface AddSourceProps {
+  handleAddSource: (type: string, path: string, name: string) => Promise<void>;
 }
 
-export default function AddRepository({
-  handleAddRepository,
-}: AddRepositoryProps) {
+export default function AddSource({
+  handleAddSource: handleAddSource,
+}: AddSourceProps) {
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [owner, setOwner] = useState("");
+  const [repoName, setRepoName] = useState("");
+  const [repoOwner, setRepoOwner] = useState("");
   const { errorSnackbar } = useSnackbar();
 
+  const [sourceName, setSourceName] = useState("");
   const [sourceType, setSourceType] = useState("github");
+  const [localPath, setLocalPath] = useState("");
 
   const handleDialogOpen = () => {
     setOpen(true);
@@ -48,13 +51,30 @@ export default function AddRepository({
 
   const handleDialogClose = () => {
     setOpen(false);
-    setName("");
-    setOwner("");
+    setRepoName("");
+    setRepoOwner("");
+    setSourceName("");
+    setLocalPath("");
+    setSourceType("github");
   };
 
   const handleDialogAdd = async () => {
+    let path = "";
+    
+    switch (sourceType) {
+      case "github":
+        path = `${repoOwner}/${repoName}`;
+        break
+      case "local":
+        path = localPath;
+        break
+      default:
+        errorSnackbar("Unknown source type");
+        return;
+    }
+    
     try {
-      await handleAddRepository(`${owner}/${name}`);
+      await handleAddSource(sourceType, path, sourceName ? sourceName : path);
       handleDialogClose();
     } catch (err: any) {
       errorSnackbar(err.message);
@@ -71,20 +91,20 @@ export default function AddRepository({
       <Fab aria-label="Add" onClick={handleDialogOpen}>
         <AddIcon />
       </Fab>
-      <Dialog open={open} fullWidth aria-labelledby="add-repository-dialog">
-        <DialogTitle id="add-repository-dialog-title">
-          Add Repository
+      <Dialog open={open} fullWidth aria-labelledby="add-source-dialog">
+        <DialogTitle id="add-source-dialog-title">
+          Add Source
         </DialogTitle>
         <DialogContent>
-
-          {/* <Tabs
-            value={sourceType}
-            onChange={(e, newValue) => setSourceType(newValue)}
-          >
-            <Tab label="GitHub" value="github" />
-            <Tab label="Local Folder" value="local" />
-          </Tabs>*/}
-
+          <TextField
+            margin="dense"
+            id="sourceName"
+            label="Name"
+            value={sourceName}
+            onChange={(event) => setSourceName(event.target.value)}
+            fullWidth
+            helperText="Leave empty for default"
+          />
 
           <TabContext value={sourceType}>
             <TabList
@@ -95,31 +115,30 @@ export default function AddRepository({
             </TabList>
             <TabPanel value="github">
               <TextField
-                autoFocus
-                margin="dense"
-                id="owner"
-                label="Repository Owner"
-                value={owner}
-                onChange={(event) => setOwner(event.target.value)}
-                fullWidth
+          margin="dense"
+          id="repoOwner"
+          label="Repository Owner"
+          value={repoOwner}
+          onChange={(event) => setRepoOwner(event.target.value)}
+          fullWidth
               />
               <TextField
-                margin="dense"
-                id="name"
-                label="Repository Name"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                fullWidth
+          margin="dense"
+          id="repoName"
+          label="Repository Name"
+          value={repoName}
+          onChange={(event) => setRepoName(event.target.value)}
+          fullWidth
               />
             </TabPanel>
             <TabPanel value="local">
               <TextField
-                autoFocus
-                margin="dense"
-                id="file"
-                label="direcroty"
-                value=""
-                fullWidth
+          margin="dense"
+          id="localPath"
+          label="Path"
+          value={localPath}
+          onChange={(event) => setLocalPath(event.target.value)}
+          fullWidth
               />
             </TabPanel>
           </TabContext>

@@ -9,8 +9,8 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import ListItemText from "@mui/material/ListItemText";
 import { Link } from "react-router-dom";
-import { useRepoMetadata, useRepos } from "../../context/ReposProvider";
-import AddRepository from "./AddRepository";
+import { /* useSourceMetadata, */ useSources } from "../../context/SourcesProvider";
+import AddSource from "./AddSource";
 
 const DivRoot = styled("div")({
   flexGrow: 1,
@@ -18,29 +18,28 @@ const DivRoot = styled("div")({
 });
 
 export default function RepoViewer() {
-  const repoMetadata = useRepoMetadata();
-  const { addRepo, deleteRepo } = useRepos();
+  const { sources, addSource, deleteSource } = useSources();
 
   return (
     <DivRoot>
       <List>
-        {repoMetadata.map((repo) => (
+        {sources.map((source) => (
           <ListItem
             button
-            key={`repo-item-${repo.full_name}`}
+            key={`repo-item-${source.name}`}
             component={Link}
-            to={`/repos/${repo.full_name}/browser/${repo.default_branch}`}
+            to={`/repos/${source.path}/browser/${source.default_branch}`}
           >
             <ListItemAvatar>
               <Avatar>
                 <BookIcon />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={repo.full_name} />
+            <ListItemText primary={source.name} />
             <ListItemSecondaryAction>
               <IconButton
                 aria-label="Delete"
-                onClick={() => deleteRepo(repo.full_name)}
+                onClick={() => deleteSource(source)}
                 size="large"
               >
                 <DeleteIcon />
@@ -49,7 +48,7 @@ export default function RepoViewer() {
           </ListItem>
         ))}
       </List>
-      <AddRepository handleAddRepository={addRepo} />
+      <AddSource handleAddSource={addSource} />
     </DivRoot>
   );
 }

@@ -162,14 +162,11 @@ export interface RepoMetadata {
  * Returns the list of repo names and corresponding GitHub metadata.
  */
 export async function getRepoMetadata(
-  repos: string[],
+  repo: string,
   { gitHubToken }: Options,
-): Promise<RepoMetadata[]> {
-  return Promise.all(
-    repos.map(async (repo) =>
-      (await gitHubApiFetch(`/repos/${repo}`, { gitHubToken })).json(),
-    ),
-  );
+): Promise<RepoMetadata> {
+  const response = await gitHubApiFetch(`/repos/${repo}`, { gitHubToken });
+  return response.json();
 }
 
 export async function verifyRepoExists(repo: string, { gitHubToken }: Options) {

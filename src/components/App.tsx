@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { GitHubApiProvider } from "../context/GitHubApiProvider";
-import { ReposProvider } from "../context/ReposProvider";
+import { SourcesProvider } from "../context/SourcesProvider";
 import { SnackbarProvider } from "../context/SnackbarProvider";
 import { SongPrefsProvider } from "../context/SongPrefsProvider";
 import { ThemeProvider } from "../context/ThemeProvider";
@@ -11,19 +11,19 @@ import BranchViewer from "./BranchView";
 import FileViewer from "./FileView";
 import Edit from "./MusicMd/Edit";
 import View from "./MusicMd/View";
-import RepoViewer from "./RepoView";
+import RepoViewer from "./SourceView";
 
 const App = () => (
   <YouTubeIdProvider>
     <SongPrefsProvider>
       <GitHubApiProvider>
-        <ReposProvider>
+        <SourcesProvider>
           <ThemeProvider>
             <SnackbarProvider>
               <HomeRouter />
             </SnackbarProvider>
           </ThemeProvider>
-        </ReposProvider>
+        </SourcesProvider>
       </GitHubApiProvider>
     </SongPrefsProvider>
   </YouTubeIdProvider>
