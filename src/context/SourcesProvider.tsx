@@ -53,20 +53,20 @@ export const SourcesProvider: FC<SourcesProviderProps> = ({ children }) => {
   const { gitHubToken } = useGitHubApi();
 
   const addSource = async (type: string, path: string, name: string) => {
-    if (sources.some((s) => {s.type === type && s.path === path})) {
+    if (sources.some((s) => s.type === type && s.path === path)) {
       throw new Error(`"${path}" is already registered.`);
     }
 
     switch (type) {
       case "github":
         await verifyRepoExists(path, { gitHubToken });
-        const default_branch = (await getRepoMetadata(path, { gitHubToken })).default_branch;
+        const { default_branch } = await getRepoMetadata(path, { gitHubToken });
         
         const newSource: Source = {
           type,
           path,
           name,
-          default_branch: default_branch,
+          default_branch,
         };
         setSources([...sources, newSource]);
         break;

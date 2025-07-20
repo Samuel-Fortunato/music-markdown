@@ -115,30 +115,30 @@ export default function AddSource({
             </TabList>
             <TabPanel value="github">
               <TextField
-          margin="dense"
-          id="repoOwner"
-          label="Repository Owner"
-          value={repoOwner}
-          onChange={(event) => setRepoOwner(event.target.value)}
-          fullWidth
+                margin="dense"
+                id="repoOwner"
+                label="Repository Owner"
+                value={repoOwner}
+                onChange={(event) => setRepoOwner(event.target.value)}
+                fullWidth
               />
               <TextField
-          margin="dense"
-          id="repoName"
-          label="Repository Name"
-          value={repoName}
-          onChange={(event) => setRepoName(event.target.value)}
-          fullWidth
+                margin="dense"
+                id="repoName"
+                label="Repository Name"
+                value={repoName}
+                onChange={(event) => setRepoName(event.target.value)}
+                fullWidth
               />
             </TabPanel>
             <TabPanel value="local">
               <TextField
-          margin="dense"
-          id="localPath"
-          label="Path"
-          value={localPath}
-          onChange={(event) => setLocalPath(event.target.value)}
-          fullWidth
+                margin="dense"
+                id="localPath"
+                label="Path"
+                value={localPath}
+                onChange={(event) => setLocalPath(event.target.value)}
+                fullWidth
               />
             </TabPanel>
           </TabContext>
