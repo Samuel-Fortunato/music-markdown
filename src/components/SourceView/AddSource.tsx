@@ -23,20 +23,15 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import { set } from "ace-builds-internal/config";
 
+import { useSources } from "../../context/SourcesProvider";
+
 const StyledGrid = styled(Grid)(({ theme }) => ({
   position: "fixed",
   bottom: theme.spacing(2),
   right: theme.spacing(2),
 }));
 
-interface AddSourceProps {
-  handleAddSource: (type: string, path: string, name: string) => Promise<void>;
-}
-
-// TODO - change explicit renaming (redundant)
-export default function AddSource({
-  handleAddSource: handleAddSource,
-}: AddSourceProps) {
+export default function AddSource() {
   const [open, setOpen] = useState(false);
   const [repoName, setRepoName] = useState("");
   const [repoOwner, setRepoOwner] = useState("");
@@ -45,6 +40,8 @@ export default function AddSource({
   const [sourceName, setSourceName] = useState("");
   const [sourceType, setSourceType] = useState("github");
   const [localPath, setLocalPath] = useState("");
+
+  const { addSource } = useSources();
 
   const handleDialogOpen = () => {
     setOpen(true);
@@ -61,13 +58,12 @@ export default function AddSource({
 
   const handleDialogAdd = async () => {
     let path = "";
-    
+
     switch (sourceType) {
       case "github":
         path = `${repoOwner}/${repoName}`;
         break
       case "local":
-        path = localPath;
         break
       default:
         errorSnackbar("Unknown source type");
@@ -75,7 +71,7 @@ export default function AddSource({
     }
     
     try {
-      await handleAddSource(sourceType, path, sourceName ? sourceName : path);
+      await addSource({type: sourceType, name: sourceName, path: path});
       handleDialogClose();
     } catch (err: any) {
       errorSnackbar(err.message);

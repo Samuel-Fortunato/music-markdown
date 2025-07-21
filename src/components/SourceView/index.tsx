@@ -5,6 +5,7 @@ import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import ListItemText from "@mui/material/ListItemText";
@@ -18,17 +19,30 @@ const DivRoot = styled("div")({
 });
 
 export default function RepoViewer() {
-  const { sources, addSource, deleteSource } = useSources();
+  const { sources, deleteSource } = useSources();
 
   return (
     <DivRoot>
       <List>
-        {sources.map((source) => (
-          <ListItem
-            button
+        {sources.map((source) => {
+          let href: string;
+
+          switch (source.type) {
+            case "github":
+              href = `/repos/${source.path}/browser/${source.default_branch}`;
+              break;
+            case "local":
+              href = "/";
+              break;
+            default:
+              href = "/";
+              break;
+          }
+
+          return <ListItemButton
             key={`repo-item-${source.name}`}
             component={Link}
-            to={`/repos/${source.path}/browser/${source.default_branch}`}
+            to={href}
           >
             <ListItemAvatar>
               <Avatar>
@@ -45,10 +59,10 @@ export default function RepoViewer() {
                 <DeleteIcon />
               </IconButton>
             </ListItemSecondaryAction>
-          </ListItem>
-        ))}
+          </ListItemButton>
+        })}
       </List>
-      <AddSource handleAddSource={addSource} />
+      <AddSource />
     </DivRoot>
   );
 }
