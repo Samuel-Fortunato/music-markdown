@@ -8,21 +8,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Fab from "@mui/material/Fab";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import { useState } from "react";
-import { useSnackbar } from "../../context/SnackbarProvider";
-
-
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import { set } from "ace-builds-internal/config";
+import { useState } from "react";
 
+import { useSnackbar } from "../../context/SnackbarProvider";
 import { useSources } from "../../context/SourcesProvider";
 
 const StyledGrid = styled(Grid)(({ theme }) => ({
@@ -33,15 +25,13 @@ const StyledGrid = styled(Grid)(({ theme }) => ({
 
 export default function AddSource() {
   const [open, setOpen] = useState(false);
-  const [repoName, setRepoName] = useState("");
-  const [repoOwner, setRepoOwner] = useState("");
   const { errorSnackbar } = useSnackbar();
-
-  const [sourceName, setSourceName] = useState("");
-  const [sourceType, setSourceType] = useState("github");
-  const [localPath, setLocalPath] = useState("");
-
   const { addSource } = useSources();
+
+  const [name, setName] = useState("");
+  const [sourceType, setSourceType] = useState("github");
+  const [repoOwner, setRepoOwner] = useState("");
+  const [repoName, setRepoName] = useState("");
 
   const handleDialogOpen = () => {
     setOpen(true);
@@ -51,27 +41,26 @@ export default function AddSource() {
     setOpen(false);
     setRepoName("");
     setRepoOwner("");
-    setSourceName("");
-    setLocalPath("");
+    setName("");
     setSourceType("github");
   };
 
-  const handleDialogAdd = async () => {
+  const handleAddSource = async () => {
     let path = "";
 
     switch (sourceType) {
       case "github":
         path = `${repoOwner}/${repoName}`;
-        break
+        break;
       case "local":
-        break
+        break;
       default:
         errorSnackbar("Unknown source type");
         return;
     }
     
     try {
-      await addSource({type: sourceType, name: sourceName, path: path});
+      await addSource({type: sourceType, name: name, path: path});
       handleDialogClose();
     } catch (err: any) {
       errorSnackbar(err.message);
@@ -97,14 +86,14 @@ export default function AddSource() {
             margin="dense"
             id="sourceName"
             label="Name"
-            value={sourceName}
-            onChange={(event) => setSourceName(event.target.value)}
+            value={name}
+            onChange={(event) => setName(event.target.value)}
             fullWidth
             helperText="Leave empty for default"
           />
-
           <TabContext value={sourceType}>
             <TabList
+              variant="fullWidth"
               onChange={(e, newValue) => setSourceType(newValue)}
             >
               <Tab label="Github" value="github" />
@@ -128,30 +117,24 @@ export default function AddSource() {
                 fullWidth
               />
             </TabPanel>
-            { /* <TabPanel value="local">
-              <TextField
-                margin="dense"
-                id="localPath"
-                label="Path"
-                value={localPath}
-                onChange={(event) => setLocalPath(event.target.value)}
-                fullWidth
-              />
+            <TabPanel value="local">
               <Button
                 fullWidth
                 variant="outlined"
-                onClick={}
+                onClick={handleAddSource}
               >
                 Select Directory
               </Button>
-            </TabPanel> */ }
+            </TabPanel>
           </TabContext>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>
-          <Button onClick={handleDialogAdd}>
-            { sourceType === "github" ? "Add" : "Select Folder" }
-          </Button>
+          {sourceType != "local" && (
+            <Button onClick={handleAddSource}>
+              Add
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </StyledGrid>

@@ -1,8 +1,9 @@
-import { createContext, FC, useContext, useEffect, useState } from "react";
-import { getRepoMetadata, RepoMetadata, verifyRepoExists } from "../lib/github";
+import { createContext, FC, useContext } from "react";
+import { getRepoMetadata, verifyRepoExists } from "../lib/github";
 import { useLocalStorage } from "../lib/hooks";
 import { useGitHubApi } from "./GitHubApiProvider";
 
+// TODO - implement uuid for sources
 interface BaseSource {
   name: string;
 }
@@ -42,24 +43,6 @@ const SourcesContext = createContext<SourcesContextValue>({
 
 export const useSources = () => useContext(SourcesContext);
 
-/* export function useSourceMetadata() {
-  const [sourceMetadata, setsourceMetadata] = useState<SourceMetadata[]>([]);
-  const { sources } = useSources();
-  const { gitHubToken } = useGitHubApi();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      sources.map((source) => {
-        const sourceMetadata = await getRepoMetadata(source, { gitHubToken });
-        setsourceMetadata(sourceMetadata);
-      }
-    };
-    fetchData();
-  }, [sources, gitHubToken]);
-
-  return sourceMetadata;
-} */
-
 interface SourcesProviderProps {
   children: React.ReactNode;
 }
@@ -70,10 +53,6 @@ export const SourcesProvider: FC<SourcesProviderProps> = ({ children }) => {
 
   const addSource = async (args: AddSourceArgs) => {
     const { type, path, name } = args;
-
-    console.debug("Adding source:", type, path, name);
-    console.debug("Current sources:", sources);
-    console.debug("Sources[] size:", sources.length);
 
     if (sources.some((s) => s.name === name)) {
       throw new Error(`Name "${name}" is already registered.`);
@@ -87,8 +66,10 @@ export const SourcesProvider: FC<SourcesProviderProps> = ({ children }) => {
         if (sources.some((s) => s.type === type && s.path === path)) {
           throw new Error(`"${path}" is already registered as a GitHub source.`);
         }
+
         await verifyRepoExists(path, { gitHubToken });
         const { default_branch } = await getRepoMetadata(path, { gitHubToken });
+        
         newName = name ? name : path;
         newSource = {
           type,
@@ -100,6 +81,7 @@ export const SourcesProvider: FC<SourcesProviderProps> = ({ children }) => {
         break;
       
       case "local":
+        // TODO - check browser support for showDirectoryPicker
         let handle: FileSystemDirectoryHandle;
         try {
           handle = await window.showDirectoryPicker();
@@ -110,22 +92,15 @@ export const SourcesProvider: FC<SourcesProviderProps> = ({ children }) => {
           throw new Error(`Failed to select folder. ${error.message}`);
         }
 
-        if (type === "local") {
-          for (const s of sources) {
-            if (s.type === "local") {
-              const same = await s.handle.isSameEntry(handle);
-              if (same) {
-                console.log("sources:", sources);
-                throw new Error(`"${handle.name}" is already registered as a local source.`);
-              }
+        for (const s of sources) {
+          if (s.type === "local") {
+            const same = await s.handle.isSameEntry(handle);
+            if (same) {
+              throw new Error(`"${handle.name}" is already registered as a local source.`);
             }
           }
-        }        
+        }
 
-        /* if (sources.some((s) => s.type === type && s.handle.isSameEntry(handle))) {
-          console.log("sources:", sources);
-          throw new Error(`"${handle.name}" is already registered as a local source.`);
-        } */
         newName = name ? name : handle.name;
         newSource = {
           name: newName,
@@ -138,10 +113,6 @@ export const SourcesProvider: FC<SourcesProviderProps> = ({ children }) => {
       default:
         throw new Error(`Unsupported source type: "${type}"`);
     }
-
-    console.debug("New source added:", newSource);
-    console.debug("Updated sources:", sources);
-    console.debug("Sources[] size after addition:", sources.length);
   };
 
   const deleteSource = (source: Source) => {
