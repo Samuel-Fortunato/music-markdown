@@ -19,7 +19,7 @@ const DivRoot = styled("div")({
   padding: 8,
 });
 
-export default function RepoViewer() {
+export default function SourceViewer() {
   const { sources, deleteSource } = useSources();
 
   return (
@@ -42,7 +42,7 @@ export default function RepoViewer() {
 
           return (
             <ListItemButton
-              key={`repo-item-${source.name}`}
+              key={`repo-item-${source.id}`}
               component={Link}
               to={href}
             >

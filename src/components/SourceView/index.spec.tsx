@@ -1,7 +1,7 @@
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material/styles";
 import { act, render } from "@testing-library/react";
-import RepoViewer from ".";
+import SourceViewer from ".";
 import { GitHubApiProvider } from "../../context/GitHubApiProvider";
 import { SourcesProvider } from "../../context/SourcesProvider";
 import { SnackbarProvider } from "../../context/SnackbarProvider";
@@ -15,7 +15,7 @@ describe("RepoViewer", () => {
           <SourcesProvider>
             <ThemeProvider theme={createTheme()}>
               <SnackbarProvider>
-                <RepoViewer />
+                <SourceViewer />
               </SnackbarProvider>
             </ThemeProvider>
           </SourcesProvider>

@@ -11,7 +11,7 @@ import BranchViewer from "./BranchView";
 import FileViewer from "./FileView";
 import Edit from "./MusicMd/Edit";
 import View from "./MusicMd/View";
-import RepoViewer from "./SourceView";
+import SourceViewer from "./SourceView";
 
 const App = () => (
   <YouTubeIdProvider>
@@ -48,7 +48,7 @@ const HomeRouter = () => (
         <BranchViewer />
       </Route>
       <Route path="/">
-        <RepoViewer />
+        <SourceViewer />
       </Route>
     </Switch>
   </Router>

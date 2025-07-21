@@ -1,10 +1,11 @@
 import { createContext, FC, useContext } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { getRepoMetadata, verifyRepoExists } from "../lib/github";
 import { useLocalStorage } from "../lib/hooks";
 import { useGitHubApi } from "./GitHubApiProvider";
 
-// TODO - implement uuid for sources
 interface BaseSource {
+  id: string;
   name: string;
 }
 
@@ -72,10 +73,11 @@ export const SourcesProvider: FC<SourcesProviderProps> = ({ children }) => {
         
         newName = name ? name : path;
         newSource = {
-          type,
-          path,
+          id: uuidv4(),
+          type: "github",
+          path: path,
           name: newName,
-          default_branch,
+          default_branch: default_branch,
         };
         setSources([...sources, newSource]);
         break;
@@ -103,9 +105,10 @@ export const SourcesProvider: FC<SourcesProviderProps> = ({ children }) => {
 
         newName = name ? name : handle.name;
         newSource = {
+          id: uuidv4(),
           name: newName,
-          type,
-          handle,
+          type: "local",
+          handle: handle,
         };
         setSources([...sources, newSource]);
         break;
