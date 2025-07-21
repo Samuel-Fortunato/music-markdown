@@ -33,6 +33,7 @@ interface AddSourceProps {
   handleAddSource: (type: string, path: string, name: string) => Promise<void>;
 }
 
+// TODO - change explicit renaming (redundant)
 export default function AddSource({
   handleAddSource: handleAddSource,
 }: AddSourceProps) {
@@ -131,7 +132,7 @@ export default function AddSource({
                 fullWidth
               />
             </TabPanel>
-            <TabPanel value="local">
+            { /* <TabPanel value="local">
               <TextField
                 margin="dense"
                 id="localPath"
@@ -140,12 +141,21 @@ export default function AddSource({
                 onChange={(event) => setLocalPath(event.target.value)}
                 fullWidth
               />
-            </TabPanel>
+              <Button
+                fullWidth
+                variant="outlined"
+                onClick={}
+              >
+                Select Directory
+              </Button>
+            </TabPanel> */ }
           </TabContext>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>
-          <Button onClick={handleDialogAdd}>Add</Button>
+          <Button onClick={handleDialogAdd}>
+            { sourceType === "github" ? "Add" : "Select Folder" }
+          </Button>
         </DialogActions>
       </Dialog>
     </StyledGrid>

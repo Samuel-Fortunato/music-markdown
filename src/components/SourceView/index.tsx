@@ -9,7 +9,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import ListItemText from "@mui/material/ListItemText";
 import { Link } from "react-router-dom";
-import { /* useSourceMetadata, */ useSources } from "../../context/SourcesProvider";
+import { useSources } from "../../context/SourcesProvider";
 import AddSource from "./AddSource";
 
 const DivRoot = styled("div")({
