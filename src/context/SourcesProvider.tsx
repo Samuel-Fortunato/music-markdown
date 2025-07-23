@@ -4,23 +4,23 @@ import { getRepoMetadata, verifyRepoExists } from "../lib/github";
 import { useLocalStorage } from "../lib/hooks";
 import { useGitHubApi } from "./GitHubApiProvider";
 
-interface BaseSource {
+export interface BaseSource {
   id: string;
   name: string;
 }
 
-interface GitHubSource extends BaseSource {
+export interface GitHubSource extends BaseSource {
   type: "github";
   path: string;
   default_branch: string;
 }
 
-interface LocalSource extends BaseSource {
+export interface LocalSource extends BaseSource {
   type: "local";
   handle: FileSystemDirectoryHandle;
 }
 
-type Source = GitHubSource | LocalSource;
+export type Source = GitHubSource | LocalSource;
 
 interface AddSourceArgs {
   type: "github" | "local";
