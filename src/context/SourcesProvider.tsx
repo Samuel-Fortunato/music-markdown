@@ -124,7 +124,7 @@ export const SourcesProvider: FC<SourcesProviderProps> = ({ children }) => {
   };
 
   const deleteSource = (source: Source) => {
-    setSources(sources.filter((r) => r !== source));
+    setSources(sources.filter((r) => r.id !== source.id));
   };
 
   return (
