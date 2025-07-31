@@ -99,10 +99,10 @@ export const SourcesProvider: FC<SourcesProviderProps> = ({ children }) => {
           throw new Error(`Failed to select folder. ${error.message}`);
         }
 
+        // Check if the source is already registered
         for (const s of sources) {
           if (s.type === "local") {
-            const same = await s.handle.isSameEntry(handle);
-            if (same) {
+            if (await s.handle.isSameEntry(handle)) {
               throw new Error(`"${handle.name}" is already registered as a local source.`);
             }
           }
