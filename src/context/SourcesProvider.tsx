@@ -83,8 +83,13 @@ export const SourcesProvider: FC<SourcesProviderProps> = ({ children }) => {
         break;
       
       case "local":
-        // TODO - check browser support for showDirectoryPicker
+        // Check browser support for showDirectoryPicker
         let handle: FileSystemDirectoryHandle;
+        if (typeof window.showDirectoryPicker !== "function") {
+          throw new Error("Your browser does not support local file access."
+            + " Please use a chromium-based browser (chrome, edge, opera, etc.)"
+            + " to use this feature.");
+        }
         try {
           handle = await window.showDirectoryPicker();
         } catch (error: any) {
